@@ -1,4 +1,5 @@
-# DBMS_shop – Art Workshop E‑Commerce (PHP + MySQL)
+# DBMS_shop
+# DBMS_shop - Art Workshop E-Commerce (PHP + MySQL)
 
 A responsive DBMS project website for selling **art commissions, illustrations, drawings, and art materials** using:
 - HTML/CSS/JavaScript
@@ -11,14 +12,18 @@ A responsive DBMS project website for selling **art commissions, illustrations, 
 - Cart and checkout flow
 - Login-required order placement
 - Transaction logs (`orders` + `order_items`)
+- Payment logs (`payments`)
 - Refund request logs (`refunds`)
 - Dark mode toggle
 - Responsive design
 
 ## DBMS Requirements Included
-- ✅ Basic SQL (tables + inserts + joins)
-- ✅ Stored Function: `fn_line_subtotal(qty, price)`
-- ✅ Stored Procedure: `sp_place_order(user_id, payment_mode, shipping_address, cart_json)`
+- Basic SQL (tables + inserts + joins)
+- Stored Function: `fn_line_subtotal(qty, price)`
+- Stored Procedures:
+  - `sp_PlaceOrder(user_id, product_id, quantity)`
+  - `sp_ProcessPayment(order_id, payment_method)`
+  - `sp_ProcessRefund(payment_id, reason)`
 
 ## Database Schema
 Main tables:
@@ -26,14 +31,15 @@ Main tables:
 - `products`
 - `orders`
 - `order_items`
+- `payments`
 - `refunds`
 
-All schema + seed data + stored function/procedure are in:
+All schema + seed data + stored routines are in:
 - `database.sql`
 
 ## Price Rules Implemented
-- Commissions/Illustrations/Drawings: **₱50–₱100**
-- Art Materials: **₱150–₱300**
+- Commissions/Illustrations/Drawings: **PHP 50 to PHP 100**
+- Art Materials: **PHP 150 to PHP 300**
 
 ## Setup (XAMPP + phpMyAdmin + VS Code)
 1. Start **Apache** and **MySQL** in XAMPP Control Panel.
@@ -50,8 +56,34 @@ Edit `config.php` if needed:
 - User: `root`
 - Password: *(empty by default in XAMPP)*
 
+## Stored Function Guide (for your report/demo)
+### 1) Purpose
+`fn_line_subtotal(qty, price)` computes **subtotal = qty * price**.
+
+### 2) Example test in phpMyAdmin SQL tab
+```sql
+SELECT fn_line_subtotal(3, 75.00) AS subtotal;
+```
+Expected result: `225.00`
+
+### 3) How it is used in this project
+- Inside `sp_PlaceOrder`, subtotal is computed for each order item.
+- This ensures subtotal calculation is centralized in DB logic.
+
+## Stored Procedure Demo Queries
+```sql
+-- Place one order line
+CALL sp_PlaceOrder(1, 2, 1);
+
+-- Process payment for order #1
+CALL sp_ProcessPayment(1, 'GCash');
+
+-- Request refund for payment #1
+CALL sp_ProcessRefund(1, 'Wrong item delivered');
+```
+
 ## Where to place your artwork images
-Put files in `assets/images/` and update the `image_path` values in the `products` table.
+Put files in `assets/images/` and update `image_path` values in `products`.
 
 Current seeded names are:
 - `assets/images/art-1.png`
@@ -61,7 +93,3 @@ Current seeded names are:
 - `assets/images/art-5.png`
 
 If images are not present, the system shows category placeholders automatically.
-
-## Important Notes
-- Checkout uses the stored procedure (`sp_place_order`) so all writes to `orders` and `order_items` are logged as a transaction.
-- Refunds are captured in the `refunds` table from the Transaction History page.
