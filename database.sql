@@ -1,8 +1,6 @@
 CREATE DATABASE IF NOT EXISTS artshop_dbms;
 USE artshop_dbms;
 
-<<<<<<< ours
-=======
 DROP TABLE IF EXISTS refunds;
 DROP TABLE IF EXISTS payments;
 DROP TABLE IF EXISTS order_items;
@@ -10,7 +8,6 @@ DROP TABLE IF EXISTS orders;
 DROP TABLE IF EXISTS products;
 DROP TABLE IF EXISTS users;
 
->>>>>>> theirs
 CREATE TABLE users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     full_name VARCHAR(120) NOT NULL,
