@@ -6,7 +6,7 @@ define('DB_NAME', 'artshop_dbms');
 define('DB_USER', 'root');
 define('DB_PASS', '');
 
-define('SITE_NAME', 'Atelier Art Shop');
+define('SITE_NAME', 'Art Shop');
 
 date_default_timezone_set('Asia/Manila');
 
