@@ -10,7 +10,11 @@
 <body>
   <div class="container">
     <nav class="nav">
+<<<<<<< ours
       <div class="logo">í¾¨ <?= SITE_NAME ?></div>
+=======
+      <div class="logo"><?= SITE_NAME ?></div>
+>>>>>>> theirs
       <div style="display:flex; gap:.45rem; align-items:center; flex-wrap:wrap; justify-content:end;">
         <a class="btn secondary" href="index.php">Shop</a>
         <?php if (isLoggedIn()): ?>
@@ -21,6 +25,10 @@
           <a class="btn secondary" href="login.php">Login</a>
           <a class="btn" href="register.php">Sign Up</a>
         <?php endif; ?>
+<<<<<<< ours
         <button id="themeToggle" class="btn secondary" type="button">í¼“</button>
+=======
+        <button id="themeToggle" class="btn secondary" type="button">Theme</button>
+>>>>>>> theirs
       </div>
     </nav>
