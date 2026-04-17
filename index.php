@@ -69,7 +69,7 @@ require 'includes/header.php';
 <?php if ($msg = flash('flash_error')): ?><div class="alert error"><?= htmlspecialchars($msg) ?></div><?php endif; ?>
 <?php if ($msg = flash('flash_success')): ?><div class="alert success"><?= htmlspecialchars($msg) ?></div><?php endif; ?>
 
-<div class="shop-layout" style="display:grid; grid-template-columns: 2fr 1fr; gap:1rem; align-items:start;">
+<div class="shop-layout">
   <section>
     <div class="filters">
       <?php foreach (['All','Commission','Illustration','Drawing','Art Material'] as $category): ?>
@@ -113,9 +113,9 @@ require 'includes/header.php';
             <strong><?= htmlspecialchars($item['product']['product_name']) ?></strong><br>
             <small><?= peso($item['subtotal']) ?></small>
           </div>
-          <form method="POST" style="display:flex; gap:.4rem; align-items:center;">
+          <form method="POST" class="cart-update-form">
             <input type="hidden" name="product_id" value="<?= (int)$item['product']['product_id'] ?>">
-            <input name="qty" type="number" min="0" max="99" value="<?= (int)$item['qty'] ?>" style="width:65px;">
+            <input name="qty" type="number" min="0" max="99" value="<?= (int)$item['qty'] ?>" class="qty-input">
             <button name="update_qty" class="btn secondary">Update</button>
           </form>
         </div>
@@ -123,7 +123,7 @@ require 'includes/header.php';
       <hr style="border-color:var(--border)">
       <p><strong>Total: <?= peso($grandTotal) ?></strong></p>
       <form method="POST" style="margin-bottom:.6rem;"><button name="clear_cart" class="btn secondary">Clear Cart</button></form>
-      <a class="btn" style="display:inline-block; text-decoration:none;" href="checkout.php">Proceed to Checkout</a>
+      <a class="btn checkout-link" href="checkout.php">Proceed to Checkout</a>
     <?php endif; ?>
   </aside>
 </div>

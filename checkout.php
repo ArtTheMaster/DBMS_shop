@@ -87,7 +87,7 @@ require 'includes/header.php';
     <option>PayPal</option>
     <option>PayMaya</option>
   </select>
-  <textarea name="shipping_address" required><?= htmlspecialchars($_SESSION['user']['address']) ?></textarea>
+  <textarea name="shipping_address" placeholder="Complete Delivery Address" required><?= htmlspecialchars($_SESSION['user']['address'] ?? '') ?></textarea>
   <button type="submit">Place Order</button>
 </form>
 
