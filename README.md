@@ -52,6 +52,12 @@ erDiagram
 <<<<<<< ours
 <<<<<<< ours
 <<<<<<< ours
+<<<<<<< ours
+=======
+    PAYMENTS ||--o{ AUDIT_LOGS : creates
+    ORDERS ||--o{ AUDIT_LOGS : links_to
+    USERS ||--o{ AUDIT_LOGS : actor
+>>>>>>> theirs
 =======
     PAYMENTS ||--o{ AUDIT_LOGS : creates
     ORDERS ||--o{ AUDIT_LOGS : links_to
@@ -129,7 +135,10 @@ erDiagram
 <<<<<<< ours
 <<<<<<< ours
 <<<<<<< ours
+<<<<<<< ours
 =======
+=======
+>>>>>>> theirs
 =======
 >>>>>>> theirs
 =======
@@ -146,6 +155,9 @@ erDiagram
     }
 <<<<<<< ours
 <<<<<<< ours
+<<<<<<< ours
+>>>>>>> theirs
+=======
 >>>>>>> theirs
 =======
 >>>>>>> theirs
@@ -184,6 +196,11 @@ The architecture is designed around a transactional e-commerce flow:
 <<<<<<< ours
 <<<<<<< ours
 <<<<<<< ours
+<<<<<<< ours
+=======
+   - `trg_before_order_item_insert` enforces positive quantity and computes subtotal consistently.
+   - `trg_after_payment_insert` writes audit events to `audit_logs` for traceability.
+>>>>>>> theirs
 =======
    - `trg_before_order_item_insert` enforces positive quantity and computes subtotal consistently.
    - `trg_after_payment_insert` writes audit events to `audit_logs` for traceability.

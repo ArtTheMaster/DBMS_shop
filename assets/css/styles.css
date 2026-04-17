@@ -134,9 +134,12 @@ body {
   padding: 0;
   cursor: zoom-in;
   position: relative;
+<<<<<<< ours
   display: block;
   width: 100%;
   line-height: 0;
+=======
+>>>>>>> theirs
   border-radius: 0;
 }
 

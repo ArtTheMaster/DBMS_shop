@@ -89,12 +89,16 @@ $imageReplacements = [
 <<<<<<< ours
           <?php if (!empty($product['image_path']) && file_exists($product['image_path'])): ?>
 <<<<<<< ours
+<<<<<<< ours
+=======
+>>>>>>> theirs
             <button
               type="button"
               class="product-media-btn"
               data-image-src="<?= htmlspecialchars($product['image_path']) ?>"
               data-image-alt="<?= htmlspecialchars($product['product_name']) ?>">
               <img src="<?= htmlspecialchars($product['image_path']) ?>" alt="<?= htmlspecialchars($product['product_name']) ?>">
+<<<<<<< ours
 =======
             <?php $imageUrl = implode('/', array_map('rawurlencode', explode('/', $product['image_path']))); ?>
 =======
@@ -112,6 +116,8 @@ $imageReplacements = [
               data-image-alt="<?= htmlspecialchars($product['product_name']) ?>">
               <img src="<?= htmlspecialchars($imageUrl) ?>" alt="<?= htmlspecialchars($product['product_name']) ?>">
 <<<<<<< ours
+>>>>>>> theirs
+=======
 >>>>>>> theirs
 =======
 >>>>>>> theirs
