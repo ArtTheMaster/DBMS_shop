@@ -48,23 +48,9 @@ if (imageButtons.length) {
   };
 
   imageButtons.forEach(button => {
-<<<<<<< ours
-    button.addEventListener('click', (event) => {
-      event.preventDefault();
-      event.stopPropagation();
-
-      const src = button.dataset.imageSrc || button.querySelector('img')?.getAttribute('src') || '';
-      const alt = button.dataset.imageAlt || 'Product image';
-
-      if (!src) return;
-
-      lightboxImg.src = src;
-      lightboxImg.alt = alt;
-=======
     button.addEventListener('click', () => {
       lightboxImg.src = button.dataset.imageSrc || '';
       lightboxImg.alt = button.dataset.imageAlt || 'Product image';
->>>>>>> theirs
       lightbox.classList.add('open');
     });
   });
