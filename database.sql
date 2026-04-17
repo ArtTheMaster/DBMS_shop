@@ -83,8 +83,6 @@ CREATE TABLE refunds (
     FOREIGN KEY (payment_id) REFERENCES payments(payment_id)
 );
 
-<<<<<<< ours
-=======
 -- audit_logs: immutable event log for important DB transactions.
 CREATE TABLE audit_logs (
     audit_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -99,7 +97,6 @@ CREATE TABLE audit_logs (
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 
->>>>>>> theirs
 -- Seed catalog data for demo/testing.
 INSERT INTO products (product_name, category, price, stock, image_path, description) VALUES
 ('Hungry? Pin/Sticker Design', 'Illustration', 90.00, 8, 'assets/images/Hungry aint you.png', 'Holiday themed nom nom nom nom custom character commission.'),
