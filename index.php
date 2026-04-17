@@ -53,7 +53,7 @@ require 'includes/header.php';
   <div class="hero-card">
     <h1>Art Workshop Store • Commissions + Materials</h1>
     <p>Explore the art workshop showcasing unique illustrations, custom commissions, drawings, and art tools. Login to place orders.</p>
-    <p><strong>Pricing:</strong> Drawings / Illustrations / Commissions: <strong>₱50-₱100</strong> • Art Materials: <strong>₱150-₱300</strong>.</p>
+    <p><strong>Pricing:</strong> Drawings / Illustrations / Commissions: <strong>₱60-₱300</strong> • Art Materials: <strong>₱5-₱250+</strong>.</p>
   </div>
   <div class="panel">
     <h3>DEVELOPED BY</h3>
