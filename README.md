@@ -37,6 +37,106 @@ Main tables:
 All schema + seed data + stored routines are in:
 - `database.sql`
 
+## Detailed ERD
+```mermaid
+erDiagram
+    USERS ||--o{ ORDERS : places
+    PRODUCTS ||--o{ ORDER_ITEMS : appears_in
+    ORDERS ||--|{ ORDER_ITEMS : contains
+    ORDERS ||--o{ PAYMENTS : paid_by
+    PAYMENTS ||--o{ REFUNDS : may_have
+
+    USERS {
+        INT user_id PK
+        VARCHAR full_name
+        VARCHAR email UNIQUE
+        VARCHAR password_hash
+        TEXT address
+        TIMESTAMP created_at
+    }
+
+    PRODUCTS {
+        INT product_id PK
+        VARCHAR product_name
+        ENUM category
+        DECIMAL price
+        INT stock
+        VARCHAR image_path
+        TEXT description
+        TINYINT is_active
+        TIMESTAMP created_at
+    }
+
+    ORDERS {
+        INT order_id PK
+        INT user_id FK
+        DECIMAL total_amount
+        TEXT shipping_address
+        ENUM order_status
+        TIMESTAMP created_at
+    }
+
+    ORDER_ITEMS {
+        INT order_item_id PK
+        INT order_id FK
+        INT product_id FK
+        INT quantity
+        DECIMAL unit_price
+        DECIMAL subtotal
+        TIMESTAMP created_at
+    }
+
+    PAYMENTS {
+        INT payment_id PK
+        INT order_id FK
+        ENUM payment_method
+        DECIMAL payment_amount
+        ENUM payment_status
+        TIMESTAMP paid_at
+    }
+
+    REFUNDS {
+        INT refund_id PK
+        INT payment_id FK
+        VARCHAR reason
+        DECIMAL refund_amount
+        ENUM status
+        TIMESTAMP requested_at
+        TIMESTAMP processed_at
+    }
+```
+
+## Clear DB Architecture Explanation
+The architecture is designed around a transactional e-commerce flow:
+
+1. **Identity Layer (`users`)**
+   - Stores customer identity and login credentials.
+   - At registration, account data is persisted immediately; shipping address is collected/updated during checkout.
+
+2. **Catalog Layer (`products`)**
+   - Holds sellable inventory and product metadata.
+   - `stock` is decremented inside the order placement procedure to keep inventory consistent.
+
+3. **Order Layer (`orders`, `order_items`)**
+   - `orders` stores order header information (who ordered, where to ship, status, totals).
+   - `order_items` stores line-by-line purchase details.
+   - This header-detail split supports accurate reporting and many-item orders.
+
+4. **Payment Layer (`payments`)**
+   - Tracks payment method, amount, and lifecycle state.
+   - Payment is recorded by `sp_ProcessPayment` after successful order placement.
+
+5. **After-Sales Layer (`refunds`)**
+   - Preserves refund requests and outcomes without deleting original payment history.
+   - Keeps auditability for financial events.
+
+6. **Database Logic Layer (Stored Routine Strategy)**
+   - `fn_line_subtotal` centralizes subtotal computation.
+   - `sp_PlaceOrder` handles stock lock/check, order insert, item insert, and stock deduction in one transaction.
+   - `sp_ProcessPayment` and `sp_ProcessRefund` centralize payment and refund state transitions.
+
+For a report-ready breakdown, see `docs/DB_ARCHITECTURE.md`.
+
 ## Price Rules Implemented
 - Commissions/Illustrations/Drawings: **PHP 50 to PHP 100**
 - Art Materials: **PHP 150 to PHP 300**

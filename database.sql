@@ -1,6 +1,7 @@
 CREATE DATABASE IF NOT EXISTS artshop_dbms;
 USE artshop_dbms;
 
+-- Drop in dependency-safe order to support repeat imports.
 DROP TABLE IF EXISTS refunds;
 DROP TABLE IF EXISTS payments;
 DROP TABLE IF EXISTS order_items;
@@ -8,6 +9,7 @@ DROP TABLE IF EXISTS orders;
 DROP TABLE IF EXISTS products;
 DROP TABLE IF EXISTS users;
 
+-- users: account identity + authentication + latest saved address.
 CREATE TABLE users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     full_name VARCHAR(120) NOT NULL,
@@ -17,6 +19,7 @@ CREATE TABLE users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- products: art catalog + inventory stock.
 CREATE TABLE products (
     product_id INT AUTO_INCREMENT PRIMARY KEY,
     product_name VARCHAR(150) NOT NULL,
@@ -29,6 +32,7 @@ CREATE TABLE products (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- orders: order header information (one row per checkout line in current app flow).
 CREATE TABLE orders (
     order_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
@@ -39,6 +43,7 @@ CREATE TABLE orders (
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 
+-- order_items: detailed line items tied to each order.
 CREATE TABLE order_items (
     order_item_id INT AUTO_INCREMENT PRIMARY KEY,
     order_id INT NOT NULL,
@@ -51,6 +56,7 @@ CREATE TABLE order_items (
     FOREIGN KEY (product_id) REFERENCES products(product_id)
 );
 
+-- payments: payment transaction per order.
 CREATE TABLE payments (
     payment_id INT AUTO_INCREMENT PRIMARY KEY,
     order_id INT NOT NULL,
@@ -61,6 +67,7 @@ CREATE TABLE payments (
     FOREIGN KEY (order_id) REFERENCES orders(order_id)
 );
 
+-- refunds: refund state audit linked to payments.
 CREATE TABLE refunds (
     refund_id INT AUTO_INCREMENT PRIMARY KEY,
     payment_id INT NOT NULL,
@@ -72,6 +79,7 @@ CREATE TABLE refunds (
     FOREIGN KEY (payment_id) REFERENCES payments(payment_id)
 );
 
+-- Seed catalog data for demo/testing.
 INSERT INTO products (product_name, category, price, stock, image_path, description) VALUES
 ('Hungry? Pin/Sticker Design', 'Illustration', 90.00, 8, 'assets/images/Hungry aint you.png', 'Holiday themed nom nom nom nom custom character commission.'),
 ('Take Your time hehehhe', 'Illustration', 75.00, 12, 'assets/images/Take your time heheh Digital.png', '(Insert Bunny pointing to time meme).'),
@@ -101,7 +109,7 @@ INSERT INTO products (product_name, category, price, stock, image_path, descript
 ('Sketch Pencil Set', 'Art Material', 155.00, 35, 'assets/images/Sketch Pencil Set.jpg', 'Set of pencils for drawing or sketching.'),
 ('Fineliner set', 'Art Material', 234.00, 35, 'assets/images/Fineliner_set.jpeg', 'Set of fineliners for detailed drawing.');
 
-
+-- Utility function: centralized subtotal formula used by procedures.
 DROP FUNCTION IF EXISTS fn_line_subtotal;
 DELIMITER $$
 CREATE FUNCTION fn_line_subtotal(p_qty INT, p_price DECIMAL(10,2))
@@ -112,6 +120,7 @@ BEGIN
 END $$
 DELIMITER ;
 
+-- Places an order line, inserts order + item, and decrements stock atomically.
 DROP PROCEDURE IF EXISTS sp_PlaceOrder;
 DELIMITER $$
 CREATE PROCEDURE sp_PlaceOrder(
@@ -125,13 +134,14 @@ BEGIN
     DECLARE v_order_id INT;
     DECLARE v_address TEXT;
 
-    START TRANSACTION;
+    START TRANSACTION; -- atomic stock + order write
 
     SELECT price, stock INTO v_price, v_stock
     FROM products
-    WHERE product_id = p_product_id
+    WHERE product_id = p_product_id 
     FOR UPDATE;
 
+    -- Reject order early if stock is not enough.
     IF v_stock < p_quantity THEN
         SIGNAL SQLSTATE '45000'
             SET MESSAGE_TEXT = 'Insufficient stock for selected product.';
@@ -141,6 +151,7 @@ BEGIN
     FROM users
     WHERE user_id = p_user_id;
 
+    -- Save current address snapshot into the order header.
     INSERT INTO orders (user_id, total_amount, shipping_address, order_status)
     VALUES (p_user_id, fn_line_subtotal(p_quantity, v_price), v_address, 'Pending');
 
@@ -153,12 +164,13 @@ BEGIN
     SET stock = stock - p_quantity
     WHERE product_id = p_product_id;
 
-    COMMIT;
+    COMMIT; -- finalize stock and order writes together
 
     SELECT v_order_id AS order_id;
 END $$
 DELIMITER ;
 
+-- Records payment and moves order status to Paid.
 DROP PROCEDURE IF EXISTS sp_ProcessPayment;
 DELIMITER $$
 CREATE PROCEDURE sp_ProcessPayment(
@@ -183,6 +195,7 @@ BEGIN
 END $$
 DELIMITER ;
 
+-- Creates refund record and updates payment status.
 DROP PROCEDURE IF EXISTS sp_ProcessRefund;
 DELIMITER $$
 CREATE PROCEDURE sp_ProcessRefund(

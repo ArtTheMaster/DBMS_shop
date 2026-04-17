@@ -19,6 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($stmt->fetch()) {
             $_SESSION['flash_error'] = 'Email already registered.';
         } else {
+            // Address is intentionally collected in checkout to keep signup short.
             $stmt = $pdo->prepare('INSERT INTO users (full_name, email, password_hash, address) VALUES (?, ?, ?, ?)');
             $stmt->execute([$fullName, $email, password_hash($password, PASSWORD_DEFAULT), '']);
             $_SESSION['flash_success'] = 'Account created! Login now.';
