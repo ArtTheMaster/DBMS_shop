@@ -96,9 +96,9 @@ CREATE TABLE audit_logs (
 
 -- Seed catalog data for demo/testing.
 INSERT INTO products (product_name, category, price, stock, image_path, description) VALUES
-('Hungry? Pin/Sticker Design', 'Illustration', 90.00, 8, 'assets/images/Hungry aint you.png', 'Holiday themed nom nom nom nom custom character commission.'),
-('Take Your time hehehhe', 'Illustration', 75.00, 12, 'assets/images/Take your time heheh Digital.png', '(Insert Bunny pointing to time meme).'),
-('What.. Pin/Sticker Design', 'Drawing', 55.00, 15, 'assets/images/What....png', 'guy in the reindeer suit nonchalant lololol.'),
+('Hungry? Pin/Sticker Design', 'Illustration', 90.00, 8, 'assets/images/Bolt n Chocos.png', 'Holiday themed nom nom nom nom custom character commission.'),
+('Take Your time hehehhe', 'Illustration', 75.00, 12, 'assets/images/MAXX NITROO.png', '(Insert Bunny pointing to time meme).'),
+('What.. Pin/Sticker Design', 'Drawing', 55.00, 15, 'assets/images/Taski Maiden.jpg', 'guy in the reindeer suit nonchalant lololol.'),
 ('some Lighting god idk Pin/Sticker Design', 'Illustration', 60.00, 9, 'assets/images/Be Carefull !!.png', 'Construct of Lightning on its Vacation.'),
 ('MAXX NITROOOO', 'Commission', 180.00, 12, 'assets/images/MAXX NITROO.png', 'Yeah im MAXXING It, Im MAXXING It, Im MAXXING It.'),
 ('Taski Maiden Pin/Sticker Design', 'Illustration', 60.00, 12, 'assets/images/Taski Maiden.jpg', 'T̵͓͈͎̙͐͑͗̀̈͘͠ȧ̸̡̪̼̥͖̗̬̓̓́͊̉̚̚͜s̷̥͈̙̼̯̩̬̅̚k̵̟̥̄į̷͖̺͆̈́͛̍̚͜ͅ ̸̨̠̖͔̼̀̀̔̋̑̀̊M̵̢̛͎̓̒̎͗͠ͅa̵̗̠̙̼͓͐͌͑̾̓̿i̴̘͖̯̹̳̇͛͛d̴̜̱̂͌̑̎̆͝e̸̢̛͍͙̬̞̘͈̜̎̀̿͂̈́̕n̵͍̈́͑.'),

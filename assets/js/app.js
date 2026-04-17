@@ -48,6 +48,7 @@ if (imageButtons.length) {
   };
 
   imageButtons.forEach(button => {
+<<<<<<< ours
     button.addEventListener('click', (event) => {
       event.preventDefault();
       event.stopPropagation();
@@ -59,6 +60,11 @@ if (imageButtons.length) {
 
       lightboxImg.src = src;
       lightboxImg.alt = alt;
+=======
+    button.addEventListener('click', () => {
+      lightboxImg.src = button.dataset.imageSrc || '';
+      lightboxImg.alt = button.dataset.imageAlt || 'Product image';
+>>>>>>> theirs
       lightbox.classList.add('open');
     });
   });
