@@ -8,6 +8,12 @@ erDiagram
     ORDERS ||--|{ ORDER_ITEMS : has_lines
     ORDERS ||--o{ PAYMENTS : receives
     PAYMENTS ||--o{ REFUNDS : may_generate
+<<<<<<< ours
+=======
+    PAYMENTS ||--o{ AUDIT_LOGS : records
+    ORDERS ||--o{ AUDIT_LOGS : context
+    USERS ||--o{ AUDIT_LOGS : actor
+>>>>>>> theirs
 ```
 
 ## 2) Table Responsibilities
@@ -56,8 +62,29 @@ erDiagram
 - A single place handles stock decrement and line subtotal calculation.
 - This reduces race conditions and keeps financial/inventory values consistent.
 
+<<<<<<< ours
 ## 5) Why this design works for DBMS coursework
 - Demonstrates **normalization** (separate users, products, order header, order lines, payments, refunds).
 - Demonstrates **relational integrity** (FK constraints across all transactional tables).
 - Demonstrates **database programming** (stored function + procedures).
+=======
+## 5) Trigger Strategy (Rubric Alignment)
+### `trg_before_order_item_insert`
+- Type: `BEFORE INSERT` on `order_items`.
+- Rules enforced:
+  - quantity must be greater than zero,
+  - subtotal is recalculated by `fn_line_subtotal`.
+- Benefit: guards data quality even if a direct SQL insert bypasses PHP code.
+
+### `trg_after_payment_insert`
+- Type: `AFTER INSERT` on `payments`.
+- Action:
+  - writes a record in `audit_logs` with payment, order, and user references.
+- Benefit: establishes an auditable backend trail for completed payments.
+
+## 6) Why this design works for DBMS coursework
+- Demonstrates **normalization** (separate users, products, order header, order lines, payments, refunds).
+- Demonstrates **relational integrity** (FK constraints across all transactional tables).
+- Demonstrates **database programming** (stored function + procedures + triggers).
+>>>>>>> theirs
 - Demonstrates **business rules in SQL** (stock checks, payment/refund lifecycle).

@@ -20,6 +20,9 @@ A responsive DBMS project website for selling **art commissions, illustrations, 
 ## DBMS Requirements Included
 - Basic SQL (tables + inserts + joins)
 - Stored Function: `fn_line_subtotal(qty, price)`
+- Triggers:
+  - `trg_before_order_item_insert`
+  - `trg_after_payment_insert`
 - Stored Procedures:
   - `sp_PlaceOrder(user_id, product_id, quantity)`
   - `sp_ProcessPayment(order_id, payment_method)`
@@ -33,6 +36,7 @@ Main tables:
 - `order_items`
 - `payments`
 - `refunds`
+- `audit_logs`
 
 All schema + seed data + stored routines are in:
 - `database.sql`
@@ -45,6 +49,12 @@ erDiagram
     ORDERS ||--|{ ORDER_ITEMS : contains
     ORDERS ||--o{ PAYMENTS : paid_by
     PAYMENTS ||--o{ REFUNDS : may_have
+<<<<<<< ours
+=======
+    PAYMENTS ||--o{ AUDIT_LOGS : creates
+    ORDERS ||--o{ AUDIT_LOGS : links_to
+    USERS ||--o{ AUDIT_LOGS : actor
+>>>>>>> theirs
 
     USERS {
         INT user_id PK
@@ -104,6 +114,19 @@ erDiagram
         TIMESTAMP requested_at
         TIMESTAMP processed_at
     }
+<<<<<<< ours
+=======
+
+    AUDIT_LOGS {
+        INT audit_id PK
+        INT payment_id FK
+        INT order_id FK
+        INT user_id FK
+        VARCHAR action_type
+        TEXT details
+        TIMESTAMP created_at
+    }
+>>>>>>> theirs
 ```
 
 ## Clear DB Architecture Explanation
@@ -134,6 +157,11 @@ The architecture is designed around a transactional e-commerce flow:
    - `fn_line_subtotal` centralizes subtotal computation.
    - `sp_PlaceOrder` handles stock lock/check, order insert, item insert, and stock deduction in one transaction.
    - `sp_ProcessPayment` and `sp_ProcessRefund` centralize payment and refund state transitions.
+<<<<<<< ours
+=======
+   - `trg_before_order_item_insert` enforces positive quantity and computes subtotal consistently.
+   - `trg_after_payment_insert` writes audit events to `audit_logs` for traceability.
+>>>>>>> theirs
 
 For a report-ready breakdown, see `docs/DB_ARCHITECTURE.md`.
 
@@ -180,6 +208,26 @@ CALL sp_ProcessPayment(1, 'GCash');
 
 -- Request refund for payment #1
 CALL sp_ProcessRefund(1, 'Wrong item delivered');
+```
+
+## Trigger Guide (for rubric: Functions & Triggers)
+### Trigger A: `trg_before_order_item_insert`
+- **When it runs:** before a new row is inserted into `order_items`.
+- **What it does:**
+  1. Blocks invalid quantity (`<= 0`) using `SIGNAL`.
+  2. Automatically computes `subtotal = fn_line_subtotal(quantity, unit_price)`.
+- **Why it helps your score:** enforces integrity and reuses DB business logic.
+
+### Trigger B: `trg_after_payment_insert`
+- **When it runs:** after a payment row is inserted into `payments`.
+- **What it does:** inserts a log row into `audit_logs` containing payment, order, and user linkage.
+- **Why it helps your score:** provides auditing/traceability for financial events.
+
+### Verify triggers in MySQL
+```sql
+SHOW TRIGGERS LIKE 'order_items';
+SHOW TRIGGERS LIKE 'payments';
+SELECT * FROM audit_logs ORDER BY audit_id DESC LIMIT 10;
 ```
 
 ## Where to place your artwork images

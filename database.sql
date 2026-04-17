@@ -2,6 +2,10 @@ CREATE DATABASE IF NOT EXISTS artshop_dbms;
 USE artshop_dbms;
 
 -- Drop in dependency-safe order to support repeat imports.
+<<<<<<< ours
+=======
+DROP TABLE IF EXISTS audit_logs;
+>>>>>>> theirs
 DROP TABLE IF EXISTS refunds;
 DROP TABLE IF EXISTS payments;
 DROP TABLE IF EXISTS order_items;
@@ -79,6 +83,23 @@ CREATE TABLE refunds (
     FOREIGN KEY (payment_id) REFERENCES payments(payment_id)
 );
 
+<<<<<<< ours
+=======
+-- audit_logs: immutable event log for important DB transactions.
+CREATE TABLE audit_logs (
+    audit_id INT AUTO_INCREMENT PRIMARY KEY,
+    payment_id INT NULL,
+    order_id INT NULL,
+    user_id INT NULL,
+    action_type VARCHAR(60) NOT NULL,
+    details TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (payment_id) REFERENCES payments(payment_id),
+    FOREIGN KEY (order_id) REFERENCES orders(order_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+);
+
+>>>>>>> theirs
 -- Seed catalog data for demo/testing.
 INSERT INTO products (product_name, category, price, stock, image_path, description) VALUES
 ('Hungry? Pin/Sticker Design', 'Illustration', 90.00, 8, 'assets/images/Hungry aint you.png', 'Holiday themed nom nom nom nom custom character commission.'),
@@ -215,5 +236,45 @@ BEGIN
     UPDATE payments
     SET payment_status = 'Refunded'
     WHERE payment_id = p_payment_id;
+END $$
+DELIMITER ;
+
+-- Trigger 1: Enforce valid quantities and centralized subtotal computation.
+DROP TRIGGER IF EXISTS trg_before_order_item_insert;
+DELIMITER $$
+CREATE TRIGGER trg_before_order_item_insert
+BEFORE INSERT ON order_items
+FOR EACH ROW
+BEGIN
+    IF NEW.quantity <= 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Quantity must be greater than zero.';
+    END IF;
+
+    SET NEW.subtotal = fn_line_subtotal(NEW.quantity, NEW.unit_price);
+END $$
+DELIMITER ;
+
+-- Trigger 2: Audit successful payments for accountability/reporting.
+DROP TRIGGER IF EXISTS trg_after_payment_insert;
+DELIMITER $$
+CREATE TRIGGER trg_after_payment_insert
+AFTER INSERT ON payments
+FOR EACH ROW
+BEGIN
+    DECLARE v_user_id INT;
+
+    SELECT user_id INTO v_user_id
+    FROM orders
+    WHERE order_id = NEW.order_id;
+
+    INSERT INTO audit_logs (payment_id, order_id, user_id, action_type, details)
+    VALUES (
+        NEW.payment_id,
+        NEW.order_id,
+        v_user_id,
+        'PAYMENT_COMPLETED',
+        CONCAT('Payment method: ', NEW.payment_method, ' | Amount: ', NEW.payment_amount)
+    );
 END $$
 DELIMITER ;

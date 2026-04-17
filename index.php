@@ -81,7 +81,13 @@ require 'includes/header.php';
       <?php foreach ($products as $product): ?>
         <article class="product" data-category="<?= htmlspecialchars($product['category']) ?>">
           <?php if (!empty($product['image_path']) && file_exists($product['image_path'])): ?>
-            <img src="<?= htmlspecialchars($product['image_path']) ?>" alt="<?= htmlspecialchars($product['product_name']) ?>">
+            <button
+              type="button"
+              class="product-media-btn"
+              data-image-src="<?= htmlspecialchars($product['image_path']) ?>"
+              data-image-alt="<?= htmlspecialchars($product['product_name']) ?>">
+              <img src="<?= htmlspecialchars($product['image_path']) ?>" alt="<?= htmlspecialchars($product['product_name']) ?>">
+            </button>
           <?php else: ?>
             <div class="img-placeholder"><?= htmlspecialchars($product['category']) ?></div>
           <?php endif; ?>
