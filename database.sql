@@ -2,10 +2,7 @@ CREATE DATABASE IF NOT EXISTS artshop_dbms;
 USE artshop_dbms;
 
 -- Drop in dependency-safe order to support repeat imports.
-<<<<<<< ours
-=======
 DROP TABLE IF EXISTS audit_logs;
->>>>>>> theirs
 DROP TABLE IF EXISTS refunds;
 DROP TABLE IF EXISTS payments;
 DROP TABLE IF EXISTS order_items;
