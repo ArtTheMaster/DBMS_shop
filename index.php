@@ -52,16 +52,16 @@ require 'includes/header.php';
 <section class="hero">
   <div class="hero-card">
     <h1>Art Workshop Store • Commissions + Materials</h1>
-    <p>Explore unique illustrations, custom commissions, drawings, and art tools. Login to place orders and generate your DBMS transaction logs.</p>
-    <p><strong>Price rules:</strong> Drawings / Illustrations / Commissions: <strong>₱50-₱100</strong> • Art Materials: <strong>₱150-₱300</strong>.</p>
+    <p>Explore the art workshop showcasing unique illustrations, custom commissions, drawings, and art tools. Login to place orders.</p>
+    <p><strong>Pricing:</strong> Drawings / Illustrations / Commissions: <strong>₱50-₱100</strong> • Art Materials: <strong>₱150-₱300</strong>.</p>
   </div>
   <div class="panel">
-    <h3>DBMS Features Included</h3>
+    <h3>DEVELOPED BY</h3>
     <ul>
-      <li>Basic SQL tables for users, orders, order_items, products, refunds</li>
-      <li>Stored Procedure for checkout transaction processing</li>
-      <li>Stored Function for subtotal calculations</li>
-      <li>Login-required checkout and transaction history</li>
+      <li>THE COC GROUP</li>
+      <li>VERIDIANO, ART LORENCE H</li>
+      <li>LAZARO, RALPH GABRIEL F</li>
+      <li>MATIAS, QFIR ADAM</li>
     </ul>
   </div>
 </section>

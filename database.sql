@@ -83,7 +83,7 @@ INSERT INTO products (product_name, category, price, stock, image_path, descript
 ('Bolt n Chocos Pin/Sticker Design', 'Illustration', 60.00, 12, 'assets/images/Bolt n Chocos.png', 'A hot Cocoa and a cat on your head, What else do you need?.'),
 ('MODELO', 'Commission', 180.00, 12, 'assets/images/Modelo Digital.jpg', 'FAAAAAAHHHH.'),
 ('FEALTY Token', 'Commission', 180.00, 12, 'assets/images/Fealty.jpg', 'Fealty card token card design for the hit trading card game Flesh and blood.'),
-('Black Clover Sketch', 'Drawing', 60.00, 12, 'assets/images/Black Clover Manga.png', 'Sketch of Asta from the anime Black Clover.'),
+('Black Clover Sketch', 'Drawing', 60.00, 12, 'assets/images/Black Clover Manga.jpeg', 'Sketch of Asta from the anime Black Clover.'),
 ('FFXV Sketch', 'Drawing', 60.00, 12, 'assets/images/FFXV Sketch.jpeg', 'Final Fantasy XV sketch.'),
 ('Garou Saitama Mode Sketch', 'Drawing', 60.00, 12, 'assets/images/Garou Saitama Mode Manga.jpeg', 'A sketch of Garou in his Saitama mode.'),
 ('Gojo vs Sukuna Sketch', 'Drawing', 60.00, 12, 'assets/images/Gojo vs Sukuna Manga.jpeg', 'The strongest sorcerer in history vs the strongest sorcerer of today.'),
