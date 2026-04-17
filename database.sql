@@ -96,9 +96,9 @@ INSERT INTO products (product_name, category, price, stock, image_path, descript
 ('White Pen', 'Art Material', 55.00, 30, 'assets/images/White_Pen.jpeg', 'pen that is... white.'),
 ('Gravity Pen', 'Art Material', 180.00, 40, 'assets/images/Gravity_Pen.jpeg', 'Pen you can use anywhere, on water, wet paper,space or oily skin.'),
 ('Pencil', 'Art Material', 5.00, 35, 'assets/images/Pencil.jpeg', 'Just your everyday pencil.'),
-('Mechanical Pencil', 'Art Material', 100.00, 25, 'assets/images/Mechanical_Pencil.jpg', 'Mechanized Pencil, with 3 0.5mm leads fills for free !!.'),
+('Mechanical Pencil', 'Art Material', 100.00, 25, 'assets/images/Mechanical_Pencil.jpeg', 'Mechanized Pencil, with 3 0.5mm leads fills for free !!.'),
 ('Rolling Pen', 'Art Material', 67.00, 35, 'assets/images/Rolling_Pen.jpeg', 'for your writing needs.'),
-('Sketch Pencil Set', 'Art Material', 155.00, 35, 'assets/images/Sketch Pencil Set.jpeg', 'Set of pencils for drawing or sketching.'),
+('Sketch Pencil Set', 'Art Material', 155.00, 35, 'assets/images/Sketch Pencil Set.jpg', 'Set of pencils for drawing or sketching.'),
 ('Fineliner set', 'Art Material', 234.00, 35, 'assets/images/Fineliner_set.jpeg', 'Set of fineliners for detailed drawing.');
 
 
