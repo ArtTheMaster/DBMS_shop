@@ -47,12 +47,6 @@ if (!empty($_SESSION['cart'])) {
 }
 
 require 'includes/header.php';
-
-$imageReplacements = [
-    'assets/images/Hungry aint you.png' => 'assets/images/Bolt n Chocos.png',
-    'assets/images/Take your time heheh Digital.png' => 'assets/images/MAXX NITROO.png',
-    'assets/images/What....png' => 'assets/images/Taski Maiden.jpg',
-];
 ?>
 
 <section class="hero">
@@ -86,41 +80,13 @@ $imageReplacements = [
     <div class="product-grid">
       <?php foreach ($products as $product): ?>
         <article class="product" data-category="<?= htmlspecialchars($product['category']) ?>">
-<<<<<<< ours
           <?php if (!empty($product['image_path']) && file_exists($product['image_path'])): ?>
-<<<<<<< ours
-<<<<<<< ours
-=======
->>>>>>> theirs
             <button
               type="button"
               class="product-media-btn"
               data-image-src="<?= htmlspecialchars($product['image_path']) ?>"
               data-image-alt="<?= htmlspecialchars($product['product_name']) ?>">
               <img src="<?= htmlspecialchars($product['image_path']) ?>" alt="<?= htmlspecialchars($product['product_name']) ?>">
-<<<<<<< ours
-=======
-            <?php $imageUrl = implode('/', array_map('rawurlencode', explode('/', $product['image_path']))); ?>
-=======
-          <?php
-            $rawImagePath = $product['image_path'] ?? '';
-            $resolvedImagePath = $imageReplacements[$rawImagePath] ?? $rawImagePath;
-          ?>
-          <?php if (!empty($resolvedImagePath) && file_exists($resolvedImagePath)): ?>
-            <?php $imageUrl = implode('/', array_map('rawurlencode', explode('/', $resolvedImagePath))); ?>
->>>>>>> theirs
-            <button
-              type="button"
-              class="product-media-btn"
-              data-image-src="<?= htmlspecialchars($imageUrl) ?>"
-              data-image-alt="<?= htmlspecialchars($product['product_name']) ?>">
-              <img src="<?= htmlspecialchars($imageUrl) ?>" alt="<?= htmlspecialchars($product['product_name']) ?>">
-<<<<<<< ours
->>>>>>> theirs
-=======
->>>>>>> theirs
-=======
->>>>>>> theirs
             </button>
           <?php else: ?>
             <div class="img-placeholder"><?= htmlspecialchars($product['category']) ?></div>
