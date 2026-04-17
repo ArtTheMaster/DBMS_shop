@@ -53,7 +53,7 @@ require 'includes/header.php';
   <div class="hero-card">
     <h1>Art Workshop Store • Commissions + Materials</h1>
     <p>Explore the art workshop showcasing unique illustrations, custom commissions, drawings, and art tools. Login to place orders.</p>
-    <p><strong>Pricing:</strong> Drawings / Illustrations / Commissions: <strong>₱50-₱100</strong> • Art Materials: <strong>₱150-₱300</strong>.</p>
+    <p><strong>Pricing:</strong> Drawings / Illustrations / Commissions: <strong>₱60-₱300</strong> • Art Materials: <strong>₱5-₱250+</strong>.</p>
   </div>
   <div class="panel">
     <h3>DEVELOPED BY</h3>
@@ -81,12 +81,22 @@ require 'includes/header.php';
       <?php foreach ($products as $product): ?>
         <article class="product" data-category="<?= htmlspecialchars($product['category']) ?>">
           <?php if (!empty($product['image_path']) && file_exists($product['image_path'])): ?>
+<<<<<<< ours
             <button
               type="button"
               class="product-media-btn"
               data-image-src="<?= htmlspecialchars($product['image_path']) ?>"
               data-image-alt="<?= htmlspecialchars($product['product_name']) ?>">
               <img src="<?= htmlspecialchars($product['image_path']) ?>" alt="<?= htmlspecialchars($product['product_name']) ?>">
+=======
+            <?php $imageUrl = implode('/', array_map('rawurlencode', explode('/', $product['image_path']))); ?>
+            <button
+              type="button"
+              class="product-media-btn"
+              data-image-src="<?= htmlspecialchars($imageUrl) ?>"
+              data-image-alt="<?= htmlspecialchars($product['product_name']) ?>">
+              <img src="<?= htmlspecialchars($imageUrl) ?>" alt="<?= htmlspecialchars($product['product_name']) ?>">
+>>>>>>> theirs
             </button>
           <?php else: ?>
             <div class="img-placeholder"><?= htmlspecialchars($product['category']) ?></div>

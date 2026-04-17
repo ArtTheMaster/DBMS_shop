@@ -134,6 +134,9 @@ body {
   padding: 0;
   cursor: zoom-in;
   position: relative;
+  display: block;
+  width: 100%;
+  line-height: 0;
   border-radius: 0;
 }
 
