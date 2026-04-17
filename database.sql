@@ -73,15 +73,34 @@ CREATE TABLE refunds (
 );
 
 INSERT INTO products (product_name, category, price, stock, image_path, description) VALUES
-('Santa Cookie Artist Commission', 'Commission', 90.00, 8, 'assets/images/art-1.png', 'Holiday themed custom character commission.'),
-('Undertale Festive Illustration', 'Illustration', 75.00, 12, 'assets/images/art-2.png', 'Digital holiday skeleton portrait art.'),
-('Reindeer Costume Sketch', 'Drawing', 55.00, 15, 'assets/images/art-3.png', 'Cute hand-drawn costume concept.'),
-('Celestial Armor Study', 'Illustration', 95.00, 9, 'assets/images/art-4.png', 'Fantasy armor character concept piece.'),
-('Painter Cat Daylight', 'Drawing', 60.00, 12, 'assets/images/art-5.png', 'Warm and cozy painted cat drawing.'),
-('Premium Acrylic Paint Set', 'Art Material', 220.00, 30, NULL, '24-color acrylic paint set.'),
-('Professional Sketchbook A4', 'Art Material', 180.00, 40, NULL, '100-page acid-free sketchbook.'),
-('Brush Set (12pcs)', 'Art Material', 160.00, 35, NULL, 'Round and flat synthetic brushes.'),
-('Marker Set (40 colors)', 'Art Material', 300.00, 25, NULL, 'Dual-tip alcohol markers.');
+('Hungry? Pin/Sticker Design', 'Illustration', 90.00, 8, 'assets/images/Hungry aint you.png', 'Holiday themed nom nom nom nom custom character commission.'),
+('Take Your time hehehhe', 'Illustration', 75.00, 12, 'assets/images/Take your time heheh Digital.png', '(Insert Bunny pointing to time meme).'),
+('What.. Pin/Sticker Design', 'Drawing', 55.00, 15, 'assets/images/What....png', 'guy in the reindeer suit nonchalant lololol.'),
+('some Lighting god idk Pin/Sticker Design', 'Illustration', 95.00, 9, 'assets/images/Be Carefull !!.png', 'Construct of Lightning on its Vacation.'),
+('MAXX NITROOOO', 'Commission', 60.00, 12, 'assets/images/MAXX NITROO.png', 'Yeah im MAXXING It, Im MAXXING It, Im MAXXING It.'),
+('Taski Maiden Pin/Sticker Design', 'Illustration', 60.00, 12, 'assets/images/Taski Maiden.jpg', 'T̵͓͈͎̙͐͑͗̀̈͘͠ȧ̸̡̪̼̥͖̗̬̓̓́͊̉̚̚͜s̷̥͈̙̼̯̩̬̅̚k̵̟̥̄į̷͖̺͆̈́͛̍̚͜ͅ ̸̨̠̖͔̼̀̀̔̋̑̀̊M̵̢̛͎̓̒̎͗͠ͅa̵̗̠̙̼͓͐͌͑̾̓̿i̴̘͖̯̹̳̇͛͛d̴̜̱̂͌̑̎̆͝e̸̢̛͍͙̬̞̘͈̜̎̀̿͂̈́̕n̵͍̈́͑.'),
+('Cindra Body Pillow Design', 'Commission', 60.00, 12, 'assets/images/Cindra Dracai of Retribution Digital.png', '( ͡° ͜ʖ ͡°)( ͡° ͜ʖ ͡°)( ͡° ͜ʖ ͡°)( ͡° ͜ʖ ͡°)( ͡° ͜ʖ ͡°)( ͡° ͜ʖ ͡°)( ͡° ͜ʖ ͡°).'),
+('Bolt n Chocos Pin/Sticker Design', 'Illustration', 60.00, 12, 'assets/images/Bolt n Chocos.png', 'A hot Cocoa and a cat on your head, What else do you need?.'),
+('MODELO', 'Commission', 60.00, 12, 'assets/images/Modelo Digital.jpg', 'FAAAAAAHHHH.'),
+('FEALTY Token', 'Commission', 60.00, 12, 'assets/images/Fealty.jpg', 'Fealty card token card design for the hit trading card game Flesh and blood.'),
+('Black Clover Sketch', 'Drawing', 60.00, 12, 'assets/images/Black Clover Manga.png', 'Sketch of Asta from the anime Black Clover.'),
+('FFXV Sketch', 'Drawing', 60.00, 12, 'assets/images/FFXV Sketch.jpeg', 'Final Fantasy XV sketch.'),
+('Garou Saitama Mode Sketch', 'Drawing', 60.00, 12, 'assets/images/Garou Saitama Mode Manga.jpeg', 'A sketch of Garou in his Saitama mode.'),
+('Gojo vs Sukuna Sketch', 'Drawing', 60.00, 12, 'assets/images/Gojo vs Sukuna Manga.jpeg', 'The strongest sorcerer in history vs the strongest sorcerer of today.'),
+('Jiraiya Sketch', 'Drawing', 60.00, 12, 'assets/images/Jiraiya Manga.jpeg', 'A sketch of Jiraiya from the Naruto series.'),
+('Owl Sketch', 'Drawing', 60.00, 12, 'assets/images/Owl Sketch.jpeg', 'Hoot Hoot.'),
+('Reze Sketch', 'Drawing', 60.00, 12, 'assets/images/Reze Chainsaw ManSketch.jpeg', 'Bang.'),
+('Snek Lady Sketch', 'Drawing', 60.00, 12, 'assets/images/Snek Lady Sketch.jpeg', '"i shouldnt put it in there, but...".'),
+('Tanjiro Kamado Sketch', 'Drawing', 60.00, 12, 'assets/images/Tanjiro Kamado Sketch.jpeg', 'A sketch of Tanjiro Kamado from Demon Slayer.'),
+('Smoker', 'Illustration', 60.00, 12, 'assets/images/Madame Red Smoke Digital.jpg', '"want a puff love?".'),
+('White Pen', 'Art Material', 220.00, 30, 'assets/images/White_Pen.jpeg', 'pen that is... white.'),
+('Gravity Pen', 'Art Material', 180.00, 40, 'assets/images/Gravity_Pen.jpeg', 'Pen you can use anywhere, on water, wet paper,space or oily skin.'),
+('Pencil', 'Art Material', 5.00, 35, 'assets/images/Pencil.jpeg', 'Just your everyday pencil.'),
+('Mechanical Pencil', 'Art Material', 100.00, 25, 'assets/images/Mechanical_Pencil.jpeg', 'Mechanized Pencil, with 3 0.5mm leads fills for free !!.'),
+('Rolling Pen', 'Art Material', 5.00, 35, 'assets/images/Rolling_Pen.jpeg', 'for your writing needs.'),
+('Sketch Pencil Set', 'Art Material', 5.00, 35, 'assets/images/Sketch Pencil Set.jpeg', 'Set of pencils for drawing or sketching.'),
+('Fineliner set', 'Art Material', 5.00, 35, 'assets/images/Fineliner_set.jpeg', 'Set of fineliners for detailed drawing.');
+
 
 DROP FUNCTION IF EXISTS fn_line_subtotal;
 DELIMITER $$
