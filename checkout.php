@@ -34,6 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['flash_error'] = 'Please select payment mode and shipping address.';
     } else {
         try {
+            // Persist shipping address back to users table so account profile stays updated.
             $updateAddress = $pdo->prepare('UPDATE users SET address = ? WHERE user_id = ?');
             $updateAddress->execute([$address, $_SESSION['user']['user_id']]);
             $_SESSION['user']['address'] = $address;
@@ -87,7 +88,7 @@ require 'includes/header.php';
     <option>PayPal</option>
     <option>PayMaya</option>
   </select>
-  <textarea name="shipping_address" required><?= htmlspecialchars($_SESSION['user']['address']) ?></textarea>
+  <textarea name="shipping_address" placeholder="Complete Delivery Address" required><?= htmlspecialchars($_SESSION['user']['address'] ?? '') ?></textarea>
   <button type="submit">Place Order</button>
 </form>
 

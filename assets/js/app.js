@@ -23,3 +23,54 @@ chips.forEach(chip => {
     });
   });
 });
+
+const imageButtons = document.querySelectorAll('.product-media-btn');
+
+if (imageButtons.length) {
+  const lightbox = document.createElement('div');
+  lightbox.className = 'image-lightbox';
+  lightbox.innerHTML = `
+    <div class="lightbox-inner">
+      <button type="button" class="lightbox-close" aria-label="Close image viewer">&times;</button>
+      <img class="lightbox-img" src="" alt="">
+    </div>
+  `;
+
+  document.body.appendChild(lightbox);
+
+  const lightboxImg = lightbox.querySelector('.lightbox-img');
+  const closeBtn = lightbox.querySelector('.lightbox-close');
+
+  const closeLightbox = () => {
+    lightbox.classList.remove('open');
+    lightboxImg.src = '';
+    lightboxImg.alt = '';
+  };
+
+  imageButtons.forEach(button => {
+    button.addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+
+      const src = button.dataset.imageSrc || button.querySelector('img')?.getAttribute('src') || '';
+      const alt = button.dataset.imageAlt || 'Product image';
+
+      if (!src) return;
+
+      lightboxImg.src = src;
+      lightboxImg.alt = alt;
+      lightbox.classList.add('open');
+    });
+  });
+
+  closeBtn.addEventListener('click', closeLightbox);
+  lightbox.addEventListener('click', (event) => {
+    if (event.target === lightbox) closeLightbox();
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && lightbox.classList.contains('open')) {
+      closeLightbox();
+    }
+  });
+}
