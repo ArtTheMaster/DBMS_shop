@@ -13,7 +13,6 @@ erDiagram
     USERS ||--o{ AUDIT_LOGS : actor
 ```
 
-
 ## 2) Table Responsibilities
 
 ### `users`
