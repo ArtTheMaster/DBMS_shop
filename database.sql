@@ -10,15 +10,18 @@ DROP TABLE IF EXISTS orders;
 DROP TABLE IF EXISTS products;
 DROP TABLE IF EXISTS users;
 
--- users: account identity + authentication + latest saved address.
+-- users: account identity + authentication + role management.
 CREATE TABLE users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     full_name VARCHAR(120) NOT NULL,
     email VARCHAR(120) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
+    -- Added role and delivery_service for the new UI requirements
+    role ENUM('Customer', 'Admin', 'Shipper') DEFAULT 'Customer', 
+    delivery_service VARCHAR(100) DEFAULT NULL, 
     address TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+) ENGINE=InnoDB;
 
 -- products: art catalog + inventory stock.
 CREATE TABLE products (
@@ -31,18 +34,21 @@ CREATE TABLE products (
     description TEXT,
     is_active TINYINT(1) DEFAULT 1,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+) ENGINE=InnoDB;
 
--- orders: order header information (one row per checkout line in current app flow).
+-- orders: order header information + delivery tracking.
 CREATE TABLE orders (
     order_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
+    -- Added shipper_id to track which deliverer is handling the receipt
+    shipper_id INT DEFAULT NULL, 
     total_amount DECIMAL(10,2) NOT NULL,
     shipping_address TEXT NOT NULL,
     order_status ENUM('Pending', 'Paid', 'Shipped', 'Delivered', 'Cancelled') DEFAULT 'Pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(user_id)
-);
+    CONSTRAINT fk_order_user FOREIGN KEY (user_id) REFERENCES users(user_id),
+    CONSTRAINT fk_order_shipper FOREIGN KEY (shipper_id) REFERENCES users(user_id)
+) ENGINE=InnoDB;
 
 -- order_items: detailed line items tied to each order.
 CREATE TABLE order_items (
@@ -53,9 +59,9 @@ CREATE TABLE order_items (
     unit_price DECIMAL(10,2) NOT NULL,
     subtotal DECIMAL(10,2) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (order_id) REFERENCES orders(order_id),
-    FOREIGN KEY (product_id) REFERENCES products(product_id)
-);
+    CONSTRAINT fk_item_order FOREIGN KEY (order_id) REFERENCES orders(order_id),
+    CONSTRAINT fk_item_product FOREIGN KEY (product_id) REFERENCES products(product_id)
+) ENGINE=InnoDB;
 
 -- payments: payment transaction per order.
 CREATE TABLE payments (
@@ -65,8 +71,8 @@ CREATE TABLE payments (
     payment_amount DECIMAL(10,2) NOT NULL,
     payment_status ENUM('Pending', 'Completed', 'Failed', 'Refunded') DEFAULT 'Pending',
     paid_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (order_id) REFERENCES orders(order_id)
-);
+    CONSTRAINT fk_payment_order FOREIGN KEY (order_id) REFERENCES orders(order_id)
+) ENGINE=InnoDB;
 
 -- refunds: refund state audit linked to payments.
 CREATE TABLE refunds (
@@ -77,8 +83,8 @@ CREATE TABLE refunds (
     status ENUM('Requested', 'Approved', 'Rejected', 'Completed') DEFAULT 'Requested',
     requested_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     processed_at TIMESTAMP NULL,
-    FOREIGN KEY (payment_id) REFERENCES payments(payment_id)
-);
+    CONSTRAINT fk_refund_payment FOREIGN KEY (payment_id) REFERENCES payments(payment_id)
+) ENGINE=InnoDB;
 
 -- audit_logs: immutable event log for important DB transactions.
 CREATE TABLE audit_logs (
@@ -89,42 +95,46 @@ CREATE TABLE audit_logs (
     action_type VARCHAR(60) NOT NULL,
     details TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (payment_id) REFERENCES payments(payment_id),
-    FOREIGN KEY (order_id) REFERENCES orders(order_id),
-    FOREIGN KEY (user_id) REFERENCES users(user_id)
-);
+    CONSTRAINT fk_audit_payment FOREIGN KEY (payment_id) REFERENCES payments(payment_id),
+    CONSTRAINT fk_audit_order FOREIGN KEY (order_id) REFERENCES orders(order_id),
+    CONSTRAINT fk_audit_user FOREIGN KEY (user_id) REFERENCES users(user_id)
+) ENGINE=InnoDB;
 
--- Seed catalog data for demo/testing.
+-- Seed catalog data.
 INSERT INTO products (product_name, category, price, stock, image_path, description) VALUES
-('Hungry? Pin/Sticker Design', 'Illustration', 90.00, 8, 'assets/images/Bolt n Chocos.png', 'Holiday themed nom nom nom nom custom character commission.'),
-('Take Your time hehehhe', 'Illustration', 75.00, 12, 'assets/images/MAXX NITROO.png', '(Insert Bunny pointing to time meme).'),
-('What.. Pin/Sticker Design', 'Drawing', 55.00, 15, 'assets/images/Taski Maiden.jpg', 'guy in the reindeer suit nonchalant lololol.'),
+('Hungry? Pin/Sticker Design', 'Illustration', 90.00, 8, 'assets/images/Hungry aint you.png', 'Holiday themed nom nom nom nom custom character commission.'),
+('Take Your time hehehhe', 'Illustration', 75.00, 12, 'assets/images/Take your time heheh Digital.png', '(Insert Bunny pointing to time meme).'),
+('What.. Pin/Sticker Design', 'Drawing', 55.00, 15, 'assets/images/What....png', 'guy in the reindeer suit nonchalant lololol.'),
 ('some Lighting god idk Pin/Sticker Design', 'Illustration', 60.00, 9, 'assets/images/Be Carefull !!.png', 'Construct of Lightning on its Vacation.'),
 ('MAXX NITROOOO', 'Commission', 180.00, 12, 'assets/images/MAXX NITROO.png', 'Yeah im MAXXING It, Im MAXXING It, Im MAXXING It.'),
-('Taski Maiden Pin/Sticker Design', 'Illustration', 60.00, 12, 'assets/images/Taski Maiden.jpg', 'T̵͓͈͎̙͐͑͗̀̈͘͠ȧ̸̡̪̼̥͖̗̬̓̓́͊̉̚̚͜s̷̥͈̙̼̯̩̬̅̚k̵̟̥̄į̷͖̺͆̈́͛̍̚͜ͅ ̸̨̠̖͔̼̀̀̔̋̑̀̊M̵̢̛͎̓̒̎͗͠ͅa̵̗̠̙̼͓͐͌͑̾̓̿i̴̘͖̯̹̳̇͛͛d̴̜̱̂͌̑̎̆͝e̸̢̛͍͙̬̞̘͈̜̎̀̿͂̈́̕n̵͍̈́͑.'),
-('Cindra Body Pillow Design', 'Commission', 300.00, 12, 'assets/images/Cindra Dracai of Retribution Digital.png', '( ͡° ͜ʖ ͡°)( ͡° ͜ʖ ͡°)( ͡° ͜ʖ ͡°)( ͡° ͜ʖ ͡°)( ͡° ͜ʖ ͡°)( ͡° ͜ʖ ͡°)( ͡° ͜ʖ ͡°).'),
-('Bolt n Chocos Pin/Sticker Design', 'Illustration', 60.00, 12, 'assets/images/Bolt n Chocos.png', 'A hot Cocoa and a cat on your head, What else do you need?.'),
-('MODELO', 'Commission', 180.00, 12, 'assets/images/Modelo Digital.jpg', 'FAAAAAAHHHH.'),
-('FEALTY Token', 'Commission', 180.00, 12, 'assets/images/Fealty.jpg', 'Fealty card token card design for the hit trading card game Flesh and blood.'),
-('Black Clover Sketch', 'Drawing', 60.00, 12, 'assets/images/Black Clover Manga.jpeg', 'Sketch of Asta from the anime Black Clover.'),
+('Taski Maiden Pin/Sticker Design', 'Illustration', 60.00, 12, 'assets/images/Taski Maiden.jpg', 'Taski Maiden.'),
+('Cindra Body Pillow Design', 'Commission', 300.00, 12, 'assets/images/Cindra Dracai of Retribution Digital.png', 'Character design.'),
+('Bolt n Chocos Pin/Sticker Design', 'Illustration', 60.00, 12, 'assets/images/Bolt n Chocos.png', 'A hot Cocoa and a cat on your head.'),
+('MODELO', 'Commission', 180.00, 12, 'assets/images/Modelo Digital.jpg', 'Digital artwork.'),
+('FEALTY Token', 'Commission', 180.00, 12, 'assets/images/Fealty.jpg', 'Trading card game design.'),
+('Black Clover Sketch', 'Drawing', 60.00, 12, 'assets/images/Black Clover Manga.jpeg', 'Sketch of Asta.'),
 ('FFXV Sketch', 'Drawing', 60.00, 12, 'assets/images/FFXV Sketch.jpeg', 'Final Fantasy XV sketch.'),
-('Garou Saitama Mode Sketch', 'Drawing', 60.00, 12, 'assets/images/Garou Saitama Mode Manga.jpeg', 'A sketch of Garou in his Saitama mode.'),
-('Gojo vs Sukuna Sketch', 'Drawing', 60.00, 12, 'assets/images/Gojo vs Sukuna Manga.jpeg', 'The strongest sorcerer in history vs the strongest sorcerer of today.'),
-('Jiraiya Sketch', 'Drawing', 60.00, 12, 'assets/images/Jiraiya Manga.jpeg', 'A sketch of Jiraiya from the Naruto series.'),
-('Owl Sketch', 'Drawing', 60.00, 12, 'assets/images/Owl Sketch.jpeg', 'Hoot Hoot.'),
-('Reze Sketch', 'Drawing', 60.00, 12, 'assets/images/Reze Chainsaw ManSketch.jpeg', 'Bang.'),
-('Snek Lady Sketch', 'Drawing', 60.00, 12, 'assets/images/Snek Sketch.jpeg', '"i shouldnt put it in there, but...".'),
-('Tanjiro Kamado Sketch', 'Drawing', 60.00, 12, 'assets/images/Tanjiro Kamado Manga.jpeg', 'A sketch of Tanjiro Kamado from Demon Slayer.'),
-('Smoker', 'Illustration', 60.00, 12, 'assets/images/Madame Red Smoke Digital.jpg', '"want a puff love?".'),
-('White Pen', 'Art Material', 55.00, 30, 'assets/images/White_Pen.jpeg', 'pen that is... white.'),
-('Gravity Pen', 'Art Material', 180.00, 40, 'assets/images/Gravity_Pen.jpeg', 'Pen you can use anywhere, on water, wet paper,space or oily skin.'),
-('Pencil', 'Art Material', 5.00, 35, 'assets/images/Pencil.jpeg', 'Just your everyday pencil.'),
-('Mechanical Pencil', 'Art Material', 100.00, 25, 'assets/images/Mechanical_Pencil.jpeg', 'Mechanized Pencil, with 3 0.5mm leads fills for free !!.'),
-('Rolling Pen', 'Art Material', 67.00, 35, 'assets/images/Rolling_Pen.jpeg', 'for your writing needs.'),
-('Sketch Pencil Set', 'Art Material', 155.00, 35, 'assets/images/Sketch Pencil Set.jpg', 'Set of pencils for drawing or sketching.'),
-('Fineliner set', 'Art Material', 234.00, 35, 'assets/images/Fineliner_set.jpeg', 'Set of fineliners for detailed drawing.');
+('Garou Saitama Mode Sketch', 'Drawing', 60.00, 12, 'assets/images/Garou Saitama Mode Manga.jpeg', 'Manga sketch.'),
+('Gojo vs Sukuna Sketch', 'Drawing', 60.00, 12, 'assets/images/Gojo vs Sukuna Manga.jpeg', 'Jujutsu Kaisen fan art.'),
+('Jiraiya Sketch', 'Drawing', 60.00, 12, 'assets/images/Jiraiya Manga.jpeg', 'Naruto series sketch.'),
+('Owl Sketch', 'Drawing', 60.00, 12, 'assets/images/Owl Sketch.jpeg', 'Nature sketch.'),
+('Reze Sketch', 'Drawing', 60.00, 12, 'assets/images/Reze Chainsaw ManSketch.jpeg', 'Chainsaw Man fan art.'),
+('Snek Lady Sketch', 'Drawing', 60.00, 12, 'assets/images/Snek Sketch.jpeg', 'Character sketch.'),
+('Tanjiro Kamado Sketch', 'Drawing', 60.00, 12, 'assets/images/Tanjiro Kamado Manga.jpeg', 'Demon Slayer sketch.'),
+('Smoker', 'Illustration', 60.00, 12, 'assets/images/Madame Red Smoke Digital.jpg', 'Digital illustration.'),
+('White Pen', 'Art Material', 55.00, 30, 'assets/images/White_Pen.jpeg', 'White gel pen.'),
+('Gravity Pen', 'Art Material', 180.00, 40, 'assets/images/Gravity_Pen.jpeg', 'All-surface pen.'),
+('Pencil', 'Art Material', 5.00, 35, 'assets/images/Pencil.jpeg', 'Standard graphite pencil.'),
+('Mechanical Pencil', 'Art Material', 100.00, 25, 'assets/images/Mechanical_Pencil.jpeg', '0.5mm mechanical pencil.'),
+('Rolling Pen', 'Art Material', 67.00, 35, 'assets/images/Rolling_Pen.jpeg', 'Rollerball pen.'),
+('Sketch Pencil Set', 'Art Material', 155.00, 35, 'assets/images/Sketch Pencil Set.jpg', 'Graphite pencil set.'),
+('Fineliner set', 'Art Material', 234.00, 35, 'assets/images/Fineliner_set.jpeg', 'Detailed drawing pen set.');
 
--- Utility function: centralized subtotal formula used by procedures.
+-- Seed Admin User (Password: admin123)
+INSERT INTO users (full_name, email, password_hash, role, address) 
+VALUES ('System Admin', 'admin@artshop.com', '$2y$10$8S8Z.o.6Lp.Ue.kE8Z8e.Oe6R7kGv0G7.g8G7.g8G7.g8G7.g8G7', 'Admin', 'Main Office');
+
+-- Utility function: centralized subtotal formula.
 DROP FUNCTION IF EXISTS fn_line_subtotal;
 DELIMITER $$
 CREATE FUNCTION fn_line_subtotal(p_qty INT, p_price DECIMAL(10,2))
@@ -149,24 +159,28 @@ BEGIN
     DECLARE v_order_id INT;
     DECLARE v_address TEXT;
 
-    START TRANSACTION; -- atomic stock + order write
+    START TRANSACTION;
 
     SELECT price, stock INTO v_price, v_stock
     FROM products
-    WHERE product_id = p_product_id 
+    WHERE product_id = p_product_id
     FOR UPDATE;
 
-    -- Reject order early if stock is not enough.
-    IF v_stock < p_quantity THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'Insufficient stock for selected product.';
+    IF v_stock IS NULL THEN
+        ROLLBACK;
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Product does not exist.';
+    ELSEIF v_stock < p_quantity THEN
+        ROLLBACK;
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Insufficient stock for selected product.';
     END IF;
 
-    SELECT address INTO v_address
-    FROM users
-    WHERE user_id = p_user_id;
+    SELECT address INTO v_address FROM users WHERE user_id = p_user_id;
+    
+    IF v_address IS NULL THEN
+        ROLLBACK;
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'User not found.';
+    END IF;
 
-    -- Save current address snapshot into the order header.
     INSERT INTO orders (user_id, total_amount, shipping_address, order_status)
     VALUES (p_user_id, fn_line_subtotal(p_quantity, v_price), v_address, 'Pending');
 
@@ -175,12 +189,9 @@ BEGIN
     INSERT INTO order_items (order_id, product_id, quantity, unit_price, subtotal)
     VALUES (v_order_id, p_product_id, p_quantity, v_price, fn_line_subtotal(p_quantity, v_price));
 
-    UPDATE products
-    SET stock = stock - p_quantity
-    WHERE product_id = p_product_id;
+    UPDATE products SET stock = stock - p_quantity WHERE product_id = p_product_id;
 
-    COMMIT; -- finalize stock and order writes together
-
+    COMMIT;
     SELECT v_order_id AS order_id;
 END $$
 DELIMITER ;
@@ -190,22 +201,21 @@ DROP PROCEDURE IF EXISTS sp_ProcessPayment;
 DELIMITER $$
 CREATE PROCEDURE sp_ProcessPayment(
     IN p_order_id INT,
-    IN p_payment_method VARCHAR(50)
+    IN p_payment_method ENUM('Cash on Delivery', 'GCash', 'PayPal', 'PayMaya')
 )
 BEGIN
     DECLARE v_total DECIMAL(10,2);
 
-    SELECT total_amount INTO v_total
-    FROM orders
-    WHERE order_id = p_order_id;
+    SELECT total_amount INTO v_total FROM orders WHERE order_id = p_order_id;
 
+    START TRANSACTION;
+    
     INSERT INTO payments (order_id, payment_method, payment_amount, payment_status)
     VALUES (p_order_id, p_payment_method, v_total, 'Completed');
 
-    UPDATE orders
-    SET order_status = 'Paid'
-    WHERE order_id = p_order_id;
+    UPDATE orders SET order_status = 'Paid' WHERE order_id = p_order_id;
 
+    COMMIT;
     SELECT LAST_INSERT_ID() AS payment_id;
 END $$
 DELIMITER ;
@@ -224,16 +234,18 @@ BEGIN
     FROM payments
     WHERE payment_id = p_payment_id;
 
+    START TRANSACTION;
+
     INSERT INTO refunds (payment_id, reason, refund_amount, status)
     VALUES (p_payment_id, p_reason, v_amount, 'Requested');
 
-    UPDATE payments
-    SET payment_status = 'Refunded'
-    WHERE payment_id = p_payment_id;
+    UPDATE payments SET payment_status = 'Refunded' WHERE payment_id = p_payment_id;
+
+    COMMIT;
 END $$
 DELIMITER ;
 
--- Trigger 1: Enforce valid quantities and centralized subtotal computation.
+-- Trigger: Enforce valid quantities and compute subtotal.
 DROP TRIGGER IF EXISTS trg_before_order_item_insert;
 DELIMITER $$
 CREATE TRIGGER trg_before_order_item_insert
@@ -241,15 +253,13 @@ BEFORE INSERT ON order_items
 FOR EACH ROW
 BEGIN
     IF NEW.quantity <= 0 THEN
-        SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'Quantity must be greater than zero.';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Quantity must be greater than zero.';
     END IF;
-
     SET NEW.subtotal = fn_line_subtotal(NEW.quantity, NEW.unit_price);
 END $$
 DELIMITER ;
 
--- Trigger 2: Audit successful payments for accountability/reporting.
+-- Trigger: Audit payments into the audit_logs table.
 DROP TRIGGER IF EXISTS trg_after_payment_insert;
 DELIMITER $$
 CREATE TRIGGER trg_after_payment_insert
@@ -257,18 +267,10 @@ AFTER INSERT ON payments
 FOR EACH ROW
 BEGIN
     DECLARE v_user_id INT;
-
-    SELECT user_id INTO v_user_id
-    FROM orders
-    WHERE order_id = NEW.order_id;
+    SELECT user_id INTO v_user_id FROM orders WHERE order_id = NEW.order_id;
 
     INSERT INTO audit_logs (payment_id, order_id, user_id, action_type, details)
-    VALUES (
-        NEW.payment_id,
-        NEW.order_id,
-        v_user_id,
-        'PAYMENT_COMPLETED',
-        CONCAT('Payment method: ', NEW.payment_method, ' | Amount: ', NEW.payment_amount)
-    );
+    VALUES (NEW.payment_id, NEW.order_id, v_user_id, 'PAYMENT_COMPLETED', 
+            CONCAT('Method: ', NEW.payment_method, ' | Amt: ', NEW.payment_amount));
 END $$
 DELIMITER ;

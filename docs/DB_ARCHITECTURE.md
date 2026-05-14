@@ -3,7 +3,7 @@
 ## 1) ERD (Entity Relationship Diagram)
 ```mermaid
 erDiagram
-    USERS ||--o{ ORDERS : places
+    USERS ||--o{ ORDERS : places ## 
     PRODUCTS ||--o{ ORDER_ITEMS : ordered_as
     ORDERS ||--|{ ORDER_ITEMS : has_lines
     ORDERS ||--o{ PAYMENTS : receives
@@ -12,6 +12,7 @@ erDiagram
     ORDERS ||--o{ AUDIT_LOGS : context
     USERS ||--o{ AUDIT_LOGS : actor
 ```
+
 
 ## 2) Table Responsibilities
 
